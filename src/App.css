@@ -36,7 +36,7 @@
   animation: loadinglogo 3s ease-in-out 1s;
   margin: auto;
   z-index: 9999;
-  opacity: 0;
+  opacity: 1;
 }
 @keyframes loadinglogo{
   0%{
@@ -81,4 +81,4 @@
     opacity: 0;
     display: none;
   }
-}
+} 
