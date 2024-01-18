@@ -31,7 +31,7 @@ function App() {
                 textAlign="center"
                 paddingY={6}
               >
-                景氣循環全貌 探測大師
+                景氣循環全貌の探測大師
               </Text>
               <Tabs isFitted variant={"unstyled"}>
                 <TabList color={"gray"} bg={"white"} opacity={0.7}>
