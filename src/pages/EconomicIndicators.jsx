@@ -109,7 +109,7 @@ const EconomicIndicators = () => {
   useEffect(() => {
     dispatch(
       fetchApiData({
-        url: "http://dst-economic-index-api.dst.cathayholdings.internal.com.tw:8003/get/index_ist",
+        url: import.meta.env.VITE_API_URL + "get/index_ist",
         target: "indicatorList",
       })
     );
@@ -118,7 +118,7 @@ const EconomicIndicators = () => {
   const fetchIndicatorData = (code) => {
     dispatch(
       fetchApiData({
-        url: "http://dst-economic-index-api.dst.cathayholdings.internal.com.tw:8003/get/index_value",
+        url: import.meta.env.VITE_API_URL + "get/index_value",
         method: "POST",
         target: "pickedIndicator",
         params: {
@@ -200,7 +200,7 @@ const EconomicIndicators = () => {
             options={options}
           />
         ) : pickedIndicatorLoading ? (
-          <Spinner color={"purple"} size={"xl"}/>
+          <Spinner color={"purple"} size={"xl"} />
         ) : (
           <NoData />
         )}
