@@ -15,8 +15,13 @@ const EconomicCycleOverview = () => {
         // valueSuffix: "%",
         formatter: function () {
           return (
-            "<b>" + this.point.name + "</b><br/>" + "2023 年 5 月" + "</b><br/>" + 
-            "2024 年 1 月" + "<br/>" 
+            "<b>" +
+            this.point.name +
+            "</b><br/>" +
+            "2023 年 5 月" +
+            "</b><br/>" +
+            "2024 年 1 月" +
+            "<br/>"
           );
         },
       },
@@ -58,20 +63,24 @@ const EconomicCycleOverview = () => {
             {
               name: "趨緩期",
               y: 25,
+              // color: "yellow",
             },
             {
               name: "衰退期",
               sliced: true,
               selected: true,
               y: 25,
+              // color:"green"
             },
             {
               name: "復甦期",
               y: 25,
+              // color:"blue"
             },
             {
               name: "擴張期",
               y: 25,
+              // color:"orange"
             },
           ],
         },
@@ -79,6 +88,19 @@ const EconomicCycleOverview = () => {
     }),
     []
   );
+  Highcharts.setOptions({
+    colors: [
+      "#DDDF00",
+      "#50B432",
+      "#058DC7",
+      "#ED561B",
+      "#24CBE5",
+      "#64E572",
+      "#FF9655",
+      "#FFF263",
+      "#6AF9C4",
+    ],
+  });
 
   return (
     <div className="overview">

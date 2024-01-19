@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 // import dayjs from "dayjs";
+import { useDispatch, useSelector } from "react-redux";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import "./EconomicIndicators.css";
@@ -9,10 +10,27 @@ import {
   HStack,
   TagLabel,
   TagCloseButton,
+  Spinner,
 } from "@chakra-ui/react";
+import { fetchApiData } from "../store/apiSlice";
+import { flattenData } from "../utils/format";
+import NoData from "../components/NoData";
 
 const EconomicIndicators = () => {
   const [selectedItems, setSelectedItems] = useState([]);
+  const [graphData, setGraphData] = useState([]);
+  const chartComponent = useRef({});
+  const indicatorDataMap = useRef({});
+
+  const dispatch = useDispatch();
+  const {
+    indicatorList: { data: indicatorList },
+    pickedIndicator: {
+      data: pickedIndicatorData,
+      loading: pickedIndicatorLoading,
+    },
+  } = useSelector((state) => state.api);
+
   const options = useMemo(
     () => ({
       chart: {
@@ -23,7 +41,7 @@ const EconomicIndicators = () => {
         align: "left",
       },
       subtitle: {
-        text: '觀測各項指標數據, 以預測未來走勢',
+        text: "觀測各項指標數據, 以預測未來走勢",
         align: "left",
       },
       legend: {
@@ -84,39 +102,55 @@ const EconomicIndicators = () => {
           fillOpacity: 0.5,
         },
       },
-      series: [
-        {
-          name: "台灣-景氣對策信號綜合分數-月",
-          data: [
-            38, 37, 37, 38, 36, 36, 31, 35, 13,
-            35, 36, 36, 34, 34, 33, 31, 30, 13,
-            30, 30, 31,
-          ],
-        },
-        {
-          name: "台灣-失業率-月",
-          data: [
-            22, 23, 24, 25, 25, 27, 29, 32, 32,
-            37, 39, 36, 35, 36, 35, 33, 37, 42,
-            43, 46, 50,
-          ],
-        },
-      ],
+      series: graphData,
     }),
-    []
+    [graphData]
   );
-  const factors = {
-    EA1101: "台灣-景氣對策信號綜合分數-月",
-    EB0101: "台灣-領先指標綜合指數-月",
-    EB0103: "台灣-落後指標綜合指數-月",
-    EB0104: "台灣-落後指標不含趨勢指數-月",
-    EB0105: "台灣-領先指標不含趨勢指數-月",
-    EB0302: "台灣-製造業採購經理人指數(PMI)-月(季節調整)",
-    EB04: "台灣-非製造業經理人指數(NMI)-月",
-    EC0101: "台灣-同時指標綜合指數-月",
-    EC0102: "台灣-同時指標不含趨勢指數-月",
-    LA07: "台灣-失業率-月",
+  useEffect(() => {
+    dispatch(
+      fetchApiData({
+        url: "http://dst-economic-index-api.dst.cathayholdings.internal.com.tw:8003/get/index_ist",
+        target: "indicatorList",
+      })
+    );
+  }, [dispatch]);
+
+  const fetchIndicatorData = (code) => {
+    dispatch(
+      fetchApiData({
+        url: "http://dst-economic-index-api.dst.cathayholdings.internal.com.tw:8003/get/index_value",
+        method: "POST",
+        target: "pickedIndicator",
+        params: {
+          code,
+          start_date: "2022-04-01",
+          end_date: "2023-12-31",
+        },
+      })
+    );
   };
+
+  useEffect(() => {
+    if (selectedItems.length === 0) return;
+    const lastSelectedItem = selectedItems.at(-1);
+    fetchIndicatorData(lastSelectedItem);
+  }, [selectedItems]);
+
+  useEffect(() => {
+    if (pickedIndicatorData && selectedItems.length > 0) {
+      const lastSelectedItem = selectedItems.at(-1);
+      indicatorDataMap.current[lastSelectedItem] = pickedIndicatorData.map(
+        (item) => item.value
+      );
+      const newGraphData = selectedItems.map((code) => ({
+        name: flattenData(indicatorList)[code],
+        data: indicatorDataMap.current[code] || [],
+      }));
+      setGraphData(newGraphData);
+    } else {
+      setGraphData([]);
+    }
+  }, [pickedIndicatorData, selectedItems, indicatorList]);
   return (
     <div id="indicators">
       <Select
@@ -125,16 +159,18 @@ const EconomicIndicators = () => {
         color="white"
         placeholder="加入指標"
         onChange={(e) => {
+          if (!e.target.value) return;
           setSelectedItems([...selectedItems, e.target.value]);
         }}
       >
-        {Object.keys(factors).map((key) => {
-          return (
-            <option key={key} value={key}>
-              {factors[key]}
-            </option>
-          );
-        })}
+        {indicatorList &&
+          Object.keys(flattenData(indicatorList)).map((key) => {
+            return (
+              <option key={key} value={key}>
+                {flattenData(indicatorList)[key]}
+              </option>
+            );
+          })}
       </Select>
       <HStack spacing={4} paddingY={4} minHeight={"80px"} flexWrap={"wrap"}>
         {selectedItems.map((itemKey) => (
@@ -145,7 +181,7 @@ const EconomicIndicators = () => {
             colorScheme="purple"
             variant="outline"
           >
-            <TagLabel>{factors[itemKey]}</TagLabel>
+            <TagLabel>{flattenData(indicatorList)[itemKey]}</TagLabel>
             <TagCloseButton
               onClick={() => {
                 setSelectedItems((prevItems) => {
@@ -156,7 +192,19 @@ const EconomicIndicators = () => {
           </Tag>
         ))}
       </HStack>
-      <HighchartsReact highcharts={Highcharts} options={options} />
+      <div className="text-center">
+        {graphData.length > 0 ? (
+          <HighchartsReact
+            ref={chartComponent}
+            highcharts={Highcharts}
+            options={options}
+          />
+        ) : pickedIndicatorLoading ? (
+          <Spinner color={"purple"} size={"xl"}/>
+        ) : (
+          <NoData />
+        )}
+      </div>
     </div>
   );
 };
