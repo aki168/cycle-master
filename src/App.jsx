@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { START_TO_USE } from "./store/appSlice";
 import EconomicCycleOverview from "./pages/EconomicCycleOverview";
 import EconomicIndicators from "./pages/EconomicIndicators";
 import MarketObservation from "./pages/MarketObservation";
@@ -16,7 +17,8 @@ import {
 } from "@chakra-ui/react";
 
 function App() {
-  const [start, setStart] = useState(false);
+  const start = useSelector((state) => state.app.startToUse);
+  const dispatch = useDispatch();
   return (
     <div id="gradient">
       {start ? (
@@ -89,7 +91,7 @@ function App() {
           <div
             className="relative top-1/4 cursor-pointer"
             onClick={() => {
-              setStart(true);
+              dispatch(START_TO_USE());
             }}
           >
             <img
@@ -108,7 +110,7 @@ function App() {
             </Text>
             <Text className="max-w-[580px] mx-auto" color={"gray.600"}>
               “景氣循環描述經濟在擴張、頂峰、收縮、谷底四個階段的變動。擴張時經濟增長，頂峰後趨緩，進入收縮，最終到達谷底。利率、政策和國際貿易是影響因素。
-              <br/> 
+              <br />
               了解景氣循環有助企業和政府做出適應性決策，緩解經濟波動帶來的風險。”
             </Text>
           </div>
