@@ -20,6 +20,8 @@ import { getColors } from "../utils/theme";
 const EconomicIndicators = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [graphData, setGraphData] = useState([]);
+  const [currentIndicator, setCurrentIndicator] = useState("");
+
   const chartComponent = useRef({});
   const indicatorDataMap = useRef({});
 
@@ -148,6 +150,7 @@ const EconomicIndicators = () => {
       }));
       setGraphData(newGraphData);
     } else {
+      setCurrentIndicator("");
       setGraphData([]);
     }
   }, [pickedIndicatorData, selectedItems, indicatorList]);
@@ -161,8 +164,10 @@ const EconomicIndicators = () => {
         onChange={(e) => {
           if (!e.target.value) return;
           if (selectedItems.includes(e.target.value)) return;
+          setCurrentIndicator(e.target.value);
           setSelectedItems([...selectedItems, e.target.value]);
         }}
+        value={currentIndicator}
       >
         {indicatorList &&
           Object.keys(flattenData(indicatorList)).map((key) => {

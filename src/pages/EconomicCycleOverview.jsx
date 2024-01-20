@@ -87,6 +87,9 @@ const EconomicCycleOverview = () => {
           ],
         },
       ],
+      credits: {
+        enabled: false,
+      },
     }),
     []
   );
