@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import { getColors } from "../utils/theme";
 
 const EconomicCycleOverview = () => {
   const options = useMemo(
@@ -11,6 +12,7 @@ const EconomicCycleOverview = () => {
       title: {
         text: "景氣循環全貌",
       },
+      colors: getColors(0.9),
       tooltip: {
         // valueSuffix: "%",
         formatter: function () {
@@ -88,19 +90,6 @@ const EconomicCycleOverview = () => {
     }),
     []
   );
-  Highcharts.setOptions({
-    colors: [
-      "#DDDF00",
-      "#50B432",
-      "#058DC7",
-      "#ED561B",
-      "#24CBE5",
-      "#64E572",
-      "#FF9655",
-      "#FFF263",
-      "#6AF9C4",
-    ],
-  });
 
   return (
     <div className="overview">

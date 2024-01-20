@@ -15,6 +15,7 @@ import {
 import { fetchApiData } from "../store/apiSlice";
 import { flattenData } from "../utils/format";
 import NoData from "../components/NoData";
+import { getColors } from "../utils/theme";
 
 const EconomicIndicators = () => {
   const [selectedItems, setSelectedItems] = useState([]);
@@ -56,29 +57,27 @@ const EconomicIndicators = () => {
           Highcharts.defaultOptions.legend.backgroundColor || "#FFFFFF",
       },
       xAxis: {
-        // formatter: function (point) {
-        //   return dayjs(point).format("YYYY-MM-DD")
-        // },
+        type: "datetime",
         plotBands: [
           {
-            from: 2000,
-            to: 2004,
-            color: "rgba(68, 10, 213, .2)",
+            from: 1604188800000,
+            to: 1619827200000,
+            color: getColors(0.1)[0],
           },
           {
-            from: 2004,
-            to: 2013,
-            color: "rgba(681, 170, 213, .2)",
+            from: 1619827200000,
+            to: 1625097600000,
+            color: getColors(0.1)[1],
           },
           {
-            from: 2013,
-            to: 2020,
-            color: "rgba(0, 170, 213, .2)",
+            from: 1625097600000,
+            to: 1640995200000,
+            color: getColors(0.1)[2],
           },
           {
-            from: 2016,
-            to: 2020,
-            color: "rgba(1, 170, 213, .2)",
+            from: 1640995200000,
+            to: 1698796800000,
+            color: getColors(0.1)[3],
           },
         ],
       },
@@ -89,7 +88,6 @@ const EconomicIndicators = () => {
       },
       tooltip: {
         shared: true,
-        headerFormat: "<b>{point.x}</b><br>",
       },
       credits: {
         enabled: false,
@@ -123,8 +121,8 @@ const EconomicIndicators = () => {
         target: "pickedIndicator",
         params: {
           code,
-          start_date: "2022-04-01",
-          end_date: "2023-12-31",
+          start_date: "2020-11-01",
+          end_date: "2023-12-01",
         },
       })
     );
@@ -142,7 +140,7 @@ const EconomicIndicators = () => {
     if (pickedIndicatorData && selectedItems.length > 0) {
       const lastSelectedItem = selectedItems.at(-1);
       indicatorDataMap.current[lastSelectedItem] = pickedIndicatorData.map(
-        (item) => item.value
+        (item) => [item.time, item.value]
       );
       const newGraphData = selectedItems.map((code) => ({
         name: flattenData(indicatorList)[code],
