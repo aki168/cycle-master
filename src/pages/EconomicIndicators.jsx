@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-// import dayjs from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
@@ -155,7 +154,7 @@ const EconomicIndicators = () => {
     }
   }, [pickedIndicatorData, selectedItems, indicatorList]);
   return (
-    <div id="indicators">
+    <div id="indicators" className="py-4">
       <Select
         bg="purple.500"
         borderColor="purple.500"

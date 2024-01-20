@@ -22,7 +22,7 @@ function App() {
   return (
     <div id="gradient">
       {start ? (
-        <section className="bg-black bg-opacity-70 min-h-full">
+        <section className="bg-black bg-opacity-70 h-dvh">
           <div className="container mx-auto py-4">
             <Box padding={4}>
               <Text
@@ -71,8 +71,8 @@ function App() {
                   bg={"#7928CA"}
                   borderRadius="1px"
                 />
-                <TabPanels className="bg-white">
-                  <TabPanel>
+                <TabPanels className="bg-white h-[72vh]" scrollBehavior={"smooth"} overflowY={"scroll"}>
+                  <TabPanel >
                     <EconomicCycleOverview />
                   </TabPanel>
                   <TabPanel>

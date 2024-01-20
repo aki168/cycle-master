@@ -87,7 +87,7 @@ const EconomicCycleOverview = () => {
           ],
         },
       ],
-      credits: {
+            credits: {
         enabled: false,
       },
     }),
@@ -95,7 +95,7 @@ const EconomicCycleOverview = () => {
   );
 
   return (
-    <div className="overview">
+    <div className="overview py-8">
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );
