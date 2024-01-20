@@ -131,12 +131,14 @@ const EconomicIndicators = () => {
   };
 
   useEffect(() => {
+    // 標籤更新且不為空時, 取得指標資料
     if (selectedItems.length === 0) return;
     const lastSelectedItem = selectedItems.at(-1);
     fetchIndicatorData(lastSelectedItem);
   }, [selectedItems]);
 
   useEffect(() => {
+    // 指標資料更新時, 更新圖表資料
     if (pickedIndicatorData && selectedItems.length > 0) {
       const lastSelectedItem = selectedItems.at(-1);
       indicatorDataMap.current[lastSelectedItem] = pickedIndicatorData.map(
@@ -160,6 +162,7 @@ const EconomicIndicators = () => {
         placeholder="加入指標"
         onChange={(e) => {
           if (!e.target.value) return;
+          if (selectedItems.includes(e.target.value)) return;
           setSelectedItems([...selectedItems, e.target.value]);
         }}
       >
